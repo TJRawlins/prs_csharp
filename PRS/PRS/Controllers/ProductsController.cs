@@ -29,7 +29,7 @@ namespace PRS.Controllers
           {
               return NotFound();
           }
-
+          /* *-*-*-*-*-*-*-* CAPSTONE - ADDED VENDOR VIRTUAL INSTANCE *-*-*-*-*-*-*-* */ 
           var product = await _context.Products
                                     .Include(x => x.Vendors).ToListAsync();
 
@@ -47,12 +47,10 @@ namespace PRS.Controllers
           {
               return NotFound();
           }
-            var product = await _context.Products.FindAsync(id);
+            /* *-*-*-*-*-*-*-* CAPSTONE - ADDED VENDOR VIRTUAL INSTANCE *-*-*-*-*-*-*-* */
+            var product = await _context.Products.Include(x => x.Vendors).SingleOrDefaultAsync(x => x.Id == id);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (product == null) return NotFound();
 
             return product;
         }
