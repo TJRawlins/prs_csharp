@@ -21,6 +21,29 @@ namespace PRS.Controllers
             _context = context;
         }
 
+        /**-*-*-*-*-*-*-*-* CAPSTONE METHOD - GET REVIEWS *-*-*-*-*-*-*-*-* */
+        // GET: api/Requests/reviews/5
+        [HttpGet("reviews/{userId}")]
+        public async Task<ActionResult<Request>> GetReviews(int userId)
+        {
+            if (_context.Requests == null)
+            {
+                return NotFound();
+            }
+
+            var request = await _context.Requests
+                                    .Include(x => x.User)
+                                    .SingleOrDefaultAsync(x => x.UserId != userId && x.Status == "REVIEW");
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            return request;
+        }
+
+
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequests()
@@ -96,7 +119,8 @@ namespace PRS.Controllers
             return await PutRequest(id, request);
 
         }
-        
+
+        /**-*-*-*-*-*-*-*-* CAPSTONE METHODS - STATUS UPDATE *-*-*-*-*-*-*-*-* */
         // PUT: api/Requests/approve/5
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> StatusApprove(int id, Request request)
@@ -105,7 +129,8 @@ namespace PRS.Controllers
             return await PutRequest(id, request);
 
         }
-        
+
+        /**-*-*-*-*-*-*-*-* CAPSTONE METHODS - STATUS UPDATE *-*-*-*-*-*-*-*-* */
         // PUT: api/Requests/reject/5
         [HttpPut("reject/{id}")]
         public async Task<IActionResult> StatusReject(int id, Request request)
