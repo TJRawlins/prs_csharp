@@ -21,6 +21,18 @@ namespace PRS.Controllers
             _context = context;
         }
 
+        /* *-*-*-*-*-*-*-*-*-* CAPSTON METHOD - USER LOGIN *-*-*-*-*-*-*-*-*- */
+        [HttpGet("{username}/{password}")]
+        public async Task<ActionResult<User>> UserLogin(string username, string password)
+        {
+            var user = await _context.Users
+                                .SingleOrDefaultAsync(x => x.Username == username
+                                                        && x.Password == password);
+            if (user == null) return NotFound();
+
+            return user;
+        }
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
