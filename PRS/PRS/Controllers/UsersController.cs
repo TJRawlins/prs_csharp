@@ -22,6 +22,7 @@ namespace PRS.Controllers
         }
 
         /* *-*-*-*-*-*-*-*-*-* CAPSTON METHOD - USER LOGIN *-*-*-*-*-*-*-*-*- */
+        // GET: api/Users/username/password
         [HttpGet("{username}/{password}")]
         public async Task<ActionResult<User>> UserLogin(string username, string password)
         {
