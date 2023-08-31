@@ -32,7 +32,6 @@ namespace PRS.Controllers
             return await _context.Requests.ToListAsync();
         }
 
-        /**-*-*-*-*-*-*-*-* CAPSTONE - GROUP USER AND PRODUCTS *-*-*-*-*-*-*-*-* */
         // GET: api/Requests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id)
@@ -41,6 +40,7 @@ namespace PRS.Controllers
           {
               return NotFound();
           }
+            /**-*-*-*-*-*-*-*-* CAPSTONE - GROUP USER AND PRODUCTS *-*-*-*-*-*-*-*-* */
             var request = await _context.Requests
                                     .Include(x => x.User)
                                     .Include(x => x.RequestLines)!
@@ -85,6 +85,36 @@ namespace PRS.Controllers
 
             return NoContent();
         }
+
+        /**-*-*-*-*-*-*-*-* CAPSTONE METHODS - STATUS UPDATE *-*-*-*-*-*-*-*-* */
+        // PUT: api/Requests/review/5
+        [HttpPut("review/{id}")]
+        public async Task<IActionResult> StatusReview(int id, Request request)
+        {
+            if (request.Total > 50) request.Status = "APPROVED";
+            request.Status = "REVIEW";
+            return await PutRequest(id, request);
+
+        }
+        
+        // PUT: api/Requests/approve/5
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> StatusApprove(int id, Request request)
+        {
+            request.Status = "APPROVED";
+            return await PutRequest(id, request);
+
+        }
+        
+        // PUT: api/Requests/reject/5
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> StatusReject(int id, Request request)
+        {
+            request.Status = "REJECTED";
+            return await PutRequest(id, request);
+
+        }
+
 
         // POST: api/Requests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
