@@ -29,7 +29,14 @@ namespace PRS.Controllers
           {
               return NotFound();
           }
-            return await _context.Products.ToListAsync();
+
+          var product = await _context.Products
+                                    .Include(x => x.Vendors).ToListAsync();
+
+            if (product == null) return NotFound();
+
+
+            return product;
         }
 
         // GET: api/Products/5
