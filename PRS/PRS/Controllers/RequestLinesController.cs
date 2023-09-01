@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,25 @@ namespace PRS.Controllers
         public RequestLinesController(PRSContext context)
         {
             _context = context;
+        }
+
+        /* *-*-*-*-*-*-*-*-*-* CAPSTONE METHOD - RECALCULATE TOTAL *-*-*-*-*-*-*-*-*- */
+        private async Task RecalculateRequestTotal(int requestId)
+        {
+            var total = (from r in _context.Requests
+                        join rl in _context.RequestLines
+                        on r.Id equals rl.RequestId
+                        join p in _context.Products
+                        on rl.ProductId equals p.Id
+                        where r.Id == requestId
+                        select new
+                        {
+                            RequestTotal = rl.Quantity * p.Price
+                        }).Sum(x => x.RequestTotal );
+
+            var request = await _context.Requests.FindAsync(requestId);
+            request!.Total = total;
+            await _context.SaveChangesAsync();
         }
 
         // GET: api/RequestLines
@@ -65,6 +85,8 @@ namespace PRS.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                /* *-*-*-*-*-*-*-*-*-* CAPSTONE METHOD EXECUTE - RECALCULATE TOTAL *-*-*-*-*-*-*-*-*- */
+                await RecalculateRequestTotal(requestLine.RequestId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -92,6 +114,8 @@ namespace PRS.Controllers
           }
             _context.RequestLines.Add(requestLine);
             await _context.SaveChangesAsync();
+            /* *-*-*-*-*-*-*-*-*-* CAPSTONE METHOD EXECUTE - RECALCULATE TOTAL *-*-*-*-*-*-*-*-*- */
+            await RecalculateRequestTotal(requestLine.RequestId);
 
             return CreatedAtAction("GetRequestLine", new { id = requestLine.Id }, requestLine);
         }
@@ -110,8 +134,12 @@ namespace PRS.Controllers
                 return NotFound();
             }
 
+            // CAPSTONE METHOD EXECUTE - saving the RequstId before SaveChagesAsync in case no request lines are left after deletion
+            var requestId = requestLine.RequestId;
             _context.RequestLines.Remove(requestLine);
             await _context.SaveChangesAsync();
+            /* *-*-*-*-*-*-*-*-*-* CAPSTONE METHOD EXECUTE - RECALCULATE TOTAL *-*-*-*-*-*-*-*-*- */
+            await RecalculateRequestTotal(requestId);
 
             return NoContent();
         }
