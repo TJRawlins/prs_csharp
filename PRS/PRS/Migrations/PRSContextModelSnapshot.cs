@@ -88,7 +88,6 @@ namespace PRS.Migrations
                         .HasColumnType("nvarchar(80)");
 
                     b.Property<string>("RejectionReason")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
@@ -271,7 +270,7 @@ namespace PRS.Migrations
                         .IsRequired();
 
                     b.HasOne("PRS.Models.Request", "Requests")
-                        .WithMany()
+                        .WithMany("RequestLines")
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -279,6 +278,11 @@ namespace PRS.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("Requests");
+                });
+
+            modelBuilder.Entity("PRS.Models.Request", b =>
+                {
+                    b.Navigation("RequestLines");
                 });
 #pragma warning restore 612, 618
         }

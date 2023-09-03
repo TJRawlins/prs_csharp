@@ -11,8 +11,8 @@ using PRS.Data;
 namespace PRS.Migrations
 {
     [DbContext(typeof(PRSContext))]
-    [Migration("20230831144846_second fix not null for user")]
-    partial class secondfixnotnullforuser
+    [Migration("20230903233557_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,7 +91,6 @@ namespace PRS.Migrations
                         .HasColumnType("nvarchar(80)");
 
                     b.Property<string>("RejectionReason")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
@@ -111,6 +110,32 @@ namespace PRS.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("PRS.Models.RequestLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("RequestLines");
                 });
 
             modelBuilder.Entity("PRS.Models.User", b =>
@@ -237,6 +262,30 @@ namespace PRS.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PRS.Models.RequestLine", b =>
+                {
+                    b.HasOne("PRS.Models.Product", "Products")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PRS.Models.Request", "Requests")
+                        .WithMany("RequestLines")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Products");
+
+                    b.Navigation("Requests");
+                });
+
+            modelBuilder.Entity("PRS.Models.Request", b =>
+                {
+                    b.Navigation("RequestLines");
                 });
 #pragma warning restore 612, 618
         }
