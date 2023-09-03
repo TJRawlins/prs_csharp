@@ -11,7 +11,7 @@ namespace PRS.Models
         [StringLength(80)]
         public string Justification { get; set; } = string.Empty;
         [StringLength(80)]
-        public string RejectionReason { get; set; } = string.Empty;
+        public string? RejectionReason { get; set; }
         [StringLength(20)]
         public string DeliveryMode { get; set; } = "Pickup";
         [StringLength(10)]
@@ -22,7 +22,7 @@ namespace PRS.Models
         public int UserId { get; set; }
         public virtual User? User { get; set; }
 
-        public IEnumerable<RequestLine>? RequestLines { get; set; }
+        public List<RequestLine>? RequestLines { get; set; }
 
     }
 }
