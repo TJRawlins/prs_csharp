@@ -14,8 +14,9 @@ namespace PRS.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        // Create variable for the DB Context
         private readonly PRSContext _context;
-
+        // 
         public UsersController(PRSContext context)
         {
             _context = context;

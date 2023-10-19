@@ -10,7 +10,9 @@ namespace PRS.Models
         public int RequestId { get; set; }
         [JsonIgnore]
         public virtual Request? Requests { get; set; }
-        public int ProductId { get; set; }
+
+        public int? ProductId { get; set; }
         public virtual Product? Products { get; set; }
+
     }
 }

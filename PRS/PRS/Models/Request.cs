@@ -22,7 +22,7 @@ namespace PRS.Models
         public int UserId { get; set; }
         public virtual User? User { get; set; }
 
-        public List<RequestLine>? RequestLines { get; set; }
+        public virtual List<RequestLine>? RequestLines { get; set; }
 
     }
 }
