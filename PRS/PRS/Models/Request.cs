@@ -11,7 +11,7 @@ namespace PRS.Models
         [StringLength(80)]
         public string Justification { get; set; } = string.Empty;
         [StringLength(80)]
-        public string? RejectionReason { get; set; }
+        public string? RejectionReason { get; set; } = "None";
         [StringLength(20)]
         public string DeliveryMode { get; set; } = "Pickup";
         [StringLength(10)]

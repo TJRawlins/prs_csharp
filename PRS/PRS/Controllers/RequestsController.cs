@@ -24,16 +24,20 @@ namespace PRS.Controllers
         /**-*-*-*-*-*-*-*-* CAPSTONE METHOD - GET REVIEWS *-*-*-*-*-*-*-*-* */
         // GET: api/Requests/reviews/5
         [HttpGet("reviews/{userId}")]
-        public async Task<ActionResult<Request>> GetReviews(int userId)
-        {
+        //public async Task<ActionResult<Request>> GetReviews(int userId)
+        public async Task<ActionResult<IEnumerable<Request>>> GetReviews(int userId) {
             if (_context.Requests == null)
             {
                 return NotFound();
             }
 
+            //var request = await _context.Requests
+            //                        .Include(x => x.User)
+            //                        .SingleOrDefaultAsync(x => x.UserId != userId && x.Status == "REVIEW");
+
             var request = await _context.Requests
-                                    .Include(x => x.User)
-                                    .SingleOrDefaultAsync(x => x.UserId != userId && x.Status == "REVIEW");
+                                    .Where(x => x.UserId != userId && x.Status == "REVIEW")
+                                    .Include(x => x.User).ToListAsync();
 
             if (request == null)
             {
@@ -114,8 +118,7 @@ namespace PRS.Controllers
         [HttpPut("review/{id}")]
         public async Task<IActionResult> StatusReview(int id, Request request)
         {
-            if (request.Total > 50) request.Status = "APPROVED";
-            request.Status = "REVIEW";
+            request.Status = request.Total < 50 ? request.Status = "APPROVED" : request.Status = "REVIEW";
             return await PutRequest(id, request);
 
         }
